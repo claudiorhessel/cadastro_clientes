@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Validation\Rule;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -41,4 +43,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function rules(int $id)
+    {
+        return [
+            'name' => 'required|string',
+            'email' => ['required','email', 'string', Rule::unique('users')->ignore($id )],
+            'password' => 'required|string|confirmed',
+        ];
+    }
 }

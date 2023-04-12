@@ -38,11 +38,7 @@ class UserApiController extends Controller
     public function store(Request $request)
     {
         try {
-            $validateUser = Validator::make($request->all(), [
-                'name' => 'required|string',
-                'email' => 'required|email|string|unique:users,email',
-                'password' => 'required|string|confirmed'
-            ]);
+            $validateUser = Validator::make($request->all(), User::rules());
 
             if($validateUser->fails()) {
                 return response()->json([
@@ -76,15 +72,30 @@ class UserApiController extends Controller
      */
     public function show(string $id)
     {
-        dd("TESTE");
-    }
+        try {
+            if(!is_numeric($id)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => '"id" must by a number'
+                ], 401);
+            }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+            $user = User::find($id);
+
+            if(!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => true,
+                'data' => $user
+            ], 200);
+        } catch (\Throwable $error) {
+            return $this->errorMessage($error);
+        }
     }
 
     /**
@@ -92,7 +103,46 @@ class UserApiController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            if(!is_numeric($id)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => '"id" must by a number'
+                ], 401);
+            }
+
+            $validateUser = Validator::make($request->all(), User::rules($id));
+
+            if($validateUser->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+
+            $user = User::find($id);
+
+            if(!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password)
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Status successfully updated'
+            ], 201);
+        } catch (\Throwable $error) {
+            return $this->errorMessage($error);
+        }
     }
 
     /**
@@ -100,6 +150,31 @@ class UserApiController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            if(!is_numeric($id)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => '"id" must by a number'
+                ], 401);
+            }
+
+            $user = User::find($id);
+
+            if(!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+
+            $user->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User successfully deleted'
+            ], 200);
+        } catch (\Throwable $error) {
+            return $this->errorMessage($error);
+        }
     }
 }

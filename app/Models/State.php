@@ -22,4 +22,12 @@ class State extends Model
         return $this->hasMany(City::class);
     }
 
+    public static function rules()
+    {
+        return [
+            'name' => 'required',
+            'abbr' => 'required',
+        ];
+    }
+
 }

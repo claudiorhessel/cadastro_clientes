@@ -44,7 +44,7 @@ class UserApiController extends Controller
                 'password' => 'required|string|confirmed'
             ]);
 
-            if($validateUser->fails()){
+            if($validateUser->fails()) {
                 return response()->json([
                     'status' => false,
                     'message' => 'validation error',

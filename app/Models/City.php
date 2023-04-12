@@ -14,11 +14,20 @@ class City extends Model
     protected $dates = ['deleted_at'];
     protected $fillable = [
         'name',
+        'state_id'
     ];
 
     public function state()
     {
         return $this->belongsTo(State::class, 'state_id');
+    }
+
+    public static function rules()
+    {
+        return [
+            'name' => 'required',
+            'state_id' => 'required',
+        ];
     }
 
 }

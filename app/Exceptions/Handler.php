@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
         });
     }
 
-    public function render($request, Throwable $exception)
+    public function render($request, Throwable $exception): JsonResponse
     {
         if ($request->is("api/*")) {
             if ($exception instanceof ValidationException) {

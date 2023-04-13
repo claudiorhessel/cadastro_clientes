@@ -59,7 +59,5 @@ class Handler extends ExceptionHandler
                 ], 401);
             }
         }
-
-        return response()->json(['error' => 'Unauthorized.'], 401);
     }
 }

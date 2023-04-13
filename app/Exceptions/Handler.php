@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
         });
     }
 
-    public function render($request, Throwable $exception): JsonResponse
+    public function render($request, Throwable $exception)
     {
         if ($request->is("api/*")) {
             if ($exception instanceof ValidationException) {
@@ -59,5 +59,7 @@ class Handler extends ExceptionHandler
                 ], 401);
             }
         }
+
+        return response()->json(['error' => 'Unauthorized.'], 401);
     }
 }

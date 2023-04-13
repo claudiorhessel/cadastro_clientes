@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string('cpf')->unique();
+            $table->string('cpf');
             $table->string('full_name');
             $table->date('birtdate');
             $table->enum('gender', ['M', 'F']);
             $table->timestamps();
             $table->softDeletes();
+            $table->unique(['cpf', 'deleted_at']);
         });
     }
 

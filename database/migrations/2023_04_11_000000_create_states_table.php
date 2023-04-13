@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('states', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 64)->unique();
-            $table->string('abbr', 2)->unique();
+            $table->string('name', 64);
+            $table->string('abbr', 2);
             $table->timestamps();
             $table->softDeletes();
+            $table->unique(['name', 'deleted_at']);
+            $table->unique(['abbr', 'deleted_at']);
 
         });
 

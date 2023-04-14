@@ -13,10 +13,11 @@ class CustomerApiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $customer = Customer::paginate();
+            $customer = Customer::with('address', 'address.state', 'address.city');
+            $customer = $customer->paginate(2);
 
             return response()->json([
                 'status' => true,
@@ -38,7 +39,7 @@ class CustomerApiController extends Controller
             if($validateCustomer->fails()) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Validation error',
+                    'message' => '"Store" validation error',
                     'errors' => $validateCustomer->errors()
                 ], 401);
             }
@@ -72,7 +73,8 @@ class CustomerApiController extends Controller
                 ], 401);
             }
 
-            $customer = Customer::find($id);
+            $customer = Customer::with('address', 'address.state', 'address.city');
+            $customer = $customer->find($id);
 
             if(!$customer) {
                 return response()->json([
@@ -108,12 +110,13 @@ class CustomerApiController extends Controller
             if($validateCustomer->fails()) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'validation error',
+                    'message' => '"Update" validation error',
                     'errors' => $validateCustomer->errors()
                 ], 401);
             }
 
-            $customer = Customer::find($id);
+            $customer = Customer::with('address');
+            $customer = $customer->find($id);
 
             if(!$customer) {
                 return response()->json([
@@ -126,6 +129,7 @@ class CustomerApiController extends Controller
 
             return response()->json([
                 'status' => true,
+                'data' => $customer,
                 'message' => 'Customer successfully updated'
             ], 201);
         } catch (\Throwable $error) {

@@ -21,7 +21,7 @@ class CityApiController extends Controller
                 $city = $city->where('name', 'LIKE', '%' . $request->name . '%');
             }
 
-            $city = $city->paginate();
+            $city = $city->get();
 
             return response()->json([
                 'status' => true,

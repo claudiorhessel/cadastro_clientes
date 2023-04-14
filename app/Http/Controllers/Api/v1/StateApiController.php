@@ -16,7 +16,7 @@ class StateApiController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $state = State::paginate();
+            $state = State::get();
 
             return response()->json([
                 'status' => true,

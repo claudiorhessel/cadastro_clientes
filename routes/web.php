@@ -15,9 +15,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/home');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('/edit', [App\Http\Controllers\HomeController::class, 'edit'])->name('customerEdit');
+Route::post('/insert', [App\Http\Controllers\HomeController::class, 'insert'])->name('customerInsert');
+Route::get('/remove', [App\Http\Controllers\HomeController::class, 'remove'])->name('customerRemove');

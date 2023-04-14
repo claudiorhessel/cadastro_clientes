@@ -21,9 +21,9 @@ class Customer extends Model
         'gender',
     ];
 
-    public function addresses()
+    public function address()
     {
-        return $this->hasMany(Address::class);
+        return $this->hasOne(Address::class);
     }
 
     public static function rulesStore()

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
+    private $APP_API_URL;
     /**
      * Create a new controller instance.
      *
@@ -16,6 +17,7 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->APP_API_URL = env('APP_API_URL');
     }
 
     /**
@@ -29,11 +31,27 @@ class HomeController extends Controller
         $id = $request->get('id');
 
         $token = $request->session()->get("auth.bearer_token");
+        if ($token == null)  {
+            $loginData = Http::withHeaders([
+                    "Accept"=> "application/json",
+                ])
+                ->get($this->APP_API_URL . '/auth/login',[
+                    'email' => 'claudiorhessel@gmail.com',
+                    'password' => 'claudio@123'
+                ]);
+
+                if ($loginData->json()['token']) {
+                    $token = $loginData->json()['token'];
+                }
+
+                $request->session()->put('auth.bearer_token', $token);
+        }
+
         $customersData = Http::withHeaders([
                 "Accept"=> "application/json",
                 "Authorization" => "Bearer " . $token
             ])
-            ->get('http://127.0.0.1:8001/api/v1/customer',[
+            ->get($this->APP_API_URL . '/customer',[
                 'page' => $page,
             ]);
 
@@ -42,7 +60,7 @@ class HomeController extends Controller
                     "Accept"=> "application/json",
                     "Authorization" => "Bearer " . $token
                 ])
-                ->get('http://127.0.0.1:8001/api/v1/customer/' . $id);
+                ->get($this->APP_API_URL . '/customer/' . $id);
         }
 
         $stateData = $this->getStates($request);
@@ -88,7 +106,7 @@ class HomeController extends Controller
                 "Accept"=> "application/json",
                 "Authorization" => "Bearer " . $token
             ])
-            ->put("http://127.0.0.1:8001/api/v1/customer/" . $id, $request->all());
+            ->put($this->APP_API_URL . "/customer/" . $id, $request->all());
 
         $returnData['currentCustomer'] = $request->all();
         $returnData['customerError'] = $customerData->json();
@@ -104,13 +122,13 @@ class HomeController extends Controller
                         "Accept"=> "application/json",
                         "Authorization" => "Bearer " . $token
                     ])
-                    ->put("http://127.0.0.1:8001/api/v1/address/" . $customerData->json()['data']['address']['id'], $addressDataToInsert);
+                    ->put($this->APP_API_URL . "/address/" . $customerData->json()['data']['address']['id'], $addressDataToInsert);
             } else {
                 $addressData = Http::withHeaders([
                         "Accept"=> "application/json",
                         "Authorization" => "Bearer " . $token
                     ])
-                    ->post("http://127.0.0.1:8001/api/v1/address/", $addressDataToInsert);
+                    ->post($this->APP_API_URL . "/address/", $addressDataToInsert);
             }
 
             if ($addressData->json()['status']) {
@@ -131,14 +149,14 @@ class HomeController extends Controller
                 "Accept"=> "application/json",
                 "Authorization" => "Bearer " . $token
             ])
-            ->post("http://127.0.0.1:8001/api/v1/customer/", $request->all());
+            ->post($this->APP_API_URL . "/customer/", $request->all());
 
         $returnData['currentCustomer'] = $request->all();
         $returnData['customerError'] = $customerData->json();
         $returnData['route'] = 'customerInsert';
         $returnData['method'] = 'POST';
 
-        if ($customerData->json()['status']) {
+        if (isset($customerData->json()['status']) && $customerData->json()['status']) {
             $addressDataToInsert = $request->all();
             $addressDataToInsert['customer_id'] = $customerData->json()['data']['id'];
 
@@ -146,20 +164,24 @@ class HomeController extends Controller
                     "Accept"=> "application/json",
                     "Authorization" => "Bearer " . $token
                 ])
-                ->post("http://127.0.0.1:8001/api/v1/address/", $addressDataToInsert);
+                ->post($this->APP_API_URL . "/address/", $addressDataToInsert);
 
-            $returnData['addressError'] = $addressData->json();
-            if ($addressData->json()['status']) {
-                return redirect()
-                    ->route('home', $request->all())
-                    ->with('message', 'OK');
+            if (isset($addressData->json()['status']) && $addressData->json()['status']) {
+                return redirect()->route('home', $customerData->json())
+                    ->with('message', 'Success');
             }
 
+            $returnData['currentCustomer'] = $request->all();
+            $returnData['addressError'] = $addressData->json();
+
+            return redirect()->route('home', $returnData)
+                ->with('message', $returnData['addressError']['message'])
+                ->withErrors($returnData['addressError']['errors']);
         }
 
-        return redirect()
-            ->route('home', $returnData)
-            ->with('message', 'Erro');
+        return redirect()->route('home', $returnData)
+            ->with('message', $returnData['customerError']['message'])
+            ->withErrors($returnData['customerError']['errors']);
     }
 
     public function remove(Request $request)
@@ -170,29 +192,31 @@ class HomeController extends Controller
                 "Accept"=> "application/json",
                 "Authorization" => "Bearer " . $token
             ])
-            ->delete("http://127.0.0.1:8001/api/v1/customer/" . $id);
+            ->delete($this->APP_API_URL . "/customer/" . $id);
 
         return $this->home($request);
     }
 
-    private function getStates(Request $request) {
+    private function getStates(Request $request)
+    {
         $token = $request->session()->get("auth.bearer_token");
 
         return Http::withHeaders([
             "Accept"=> "application/json",
             "Authorization" => "Bearer " . $token
         ])
-        ->get('http://127.0.0.1:8001/api/v1/state');
+        ->get($this->APP_API_URL . '/state');
 
     }
 
-    private function getCities(Request $request) {
+    private function getCities(Request $request)
+    {
         $token = $request->session()->get("auth.bearer_token");
 
         return Http::withHeaders([
             "Accept"=> "application/json",
             "Authorization" => "Bearer " . $token
         ])
-        ->get('http://127.0.0.1:8001/api/v1/city');
+        ->get($this->APP_API_URL . '/city');
     }
 }

@@ -4,6 +4,7 @@ Cadastro de clientes construído utilizando Laravel, Bootstrap e MySQL.
 
 Tomei a decisão de fazer uma tela única para exibição, consulta, edição, criação e exclusão de clientes.
 
+O projeto em os endpoints para as rotas necessárias para o cadastro do cliente, o arquivo com export da collection todos os endpoints para o Insomnia é o "cadastro_clientes.json" que está na raiz do projeto.
 
 Este projeto Laravel 10.x. Todo os JS e CSS foram implementados pelo pacote `laravel/vite` e compilados com `npm`:
 
@@ -27,14 +28,13 @@ Este projeto Laravel 10.x. Todo os JS e CSS foram implementados pelo pacote `lar
     DB_USERNAME=root
     DB_PASSWORD=secret
 
-~$bash php artisan key:generate
-
 ```
 
 ### 2. Baixar dependências
 ```
 ~$bash npm install
 ~$bash composer install
+~$bash php artisan key:generate
 ```
 
 ### 3. Executar migrations

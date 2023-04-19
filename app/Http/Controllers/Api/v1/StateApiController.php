@@ -13,10 +13,16 @@ class StateApiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $state = State::get();
+            $state = State::orderBy('name', 'asc');
+
+            if($request->name) {
+                $state = $state->where('name', 'LIKE', '%' . $request->name . '%');
+            }
+
+            $state = $state->get();
 
             return response()->json([
                 'status' => true,

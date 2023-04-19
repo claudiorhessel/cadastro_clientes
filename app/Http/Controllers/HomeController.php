@@ -52,7 +52,14 @@ class HomeController extends Controller
                 "Authorization" => "Bearer " . $token
             ])
             ->get($this->APP_API_URL . '/customer',[
-                'page' => $page,
+                'page' => $request->get('page'),
+                'birtdate' => $request->get('birtdate'),
+                'full_name' => $request->get('full_name'),
+                'cpf' => $request->get('cpf'),
+                'gender' => $request->get('gender'),
+                'address' => $request->get('address'),
+                'state_id' => $request->get('state_id'),
+                'city_id' => $request->get('city_id')
             ]);
 
         if ($id) {
@@ -70,6 +77,7 @@ class HomeController extends Controller
         $customers['state'] = $stateData->json()["data"];
         $customers['city'] = $cityData->json()["data"];
         $customers['id'] = $request->get('id');
+        $customers['currentCustomer'] = $request->all();
 
         $customerRequesteReturn = $request->get('customerError');
         if (isset($customerRequesteReturn['status']) && !$customerRequesteReturn['status']) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,6 +18,35 @@ class CustomerApiController extends Controller
     {
         try {
             $customer = Customer::with('address', 'address.state', 'address.city');
+
+            if($request->cpf) {
+                $customer = $customer->where('cpf', 'LIKE', '%'.$request->cpf.'%');
+            }
+
+            if($request->birtdate) {
+                $customer = $customer->where('birtdate', 'LIKE', '%'.$request->birtdate.'%');
+            }
+
+            if($request->full_name) {
+                $customer = $customer->where('full_name', 'LIKE', '%'.$request->full_name.'%');
+            }
+
+            if($request->gender) {
+                $customer = $customer->where('gender', 'LIKE', '%'.$request->gender.'%');
+            }
+
+            if($request->address) {
+                $customer = $customer->whereRelation('address', 'address', 'LIKE', '%'.$request->address.'%');
+            }
+
+            if($request->state_id) {
+                $customer = $customer->whereRelation('address', 'state_id', '=', $request->state_id);
+            }
+
+            if($request->city_id) {
+                $customer = $customer->whereRelation('address', 'city_id', '=', $request->city_id);
+            }
+
             $customer = $customer->paginate(2);
 
             return response()->json([
@@ -24,7 +54,11 @@ class CustomerApiController extends Controller
                 'data' => $customer,
             ], 200);
         } catch (\Throwable $error) {
-            return $this->errorMessage($error);
+            return response()->json([
+                'status' => false,
+                'message' => 'Error',
+                'errors' => $error
+            ], 401);
         }
     }
 

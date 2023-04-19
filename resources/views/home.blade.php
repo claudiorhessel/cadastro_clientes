@@ -46,7 +46,7 @@
                                             name="cpf"
                                             data-mask="999.999.999-99"
                                             value="{{ isset($currentCustomer['cpf'])? $currentCustomer['cpf'] : '' }}"
-                                            required
+                                            {{ $route != "home"? "required" : "" }}
                                         >
                                         @error('cpf')
                                         <div class="invalid-feedback">
@@ -62,7 +62,7 @@
                                             id="birtdate"
                                             name="birtdate"
                                             value="{{ isset($currentCustomer['birtdate'])? $currentCustomer['birtdate'] : '' }}"
-                                            required
+                                            {{ $route != "home"? "required" : "" }}
                                         >
                                         @error('birtdate')
                                         <div class="invalid-feedback">
@@ -78,7 +78,7 @@
                                             id="full_name"
                                             name="full_name"
                                             value="{{ isset($currentCustomer['full_name'])? $currentCustomer['full_name'] : '' }}"
-                                            required
+                                            {{ $route != "home"? "required" : "" }}
                                         >
                                         @error('full_name')
                                         <div class="invalid-feedback">
@@ -95,7 +95,7 @@
                                                 name="gender"
                                                 id="gender_m"
                                                 value="M" {{ isset($currentCustomer['gender']) && $currentCustomer['gender'] == "M"? "checked" : '' }}
-                                                required
+                                                {{ $route != "home"? "required" : "" }}
                                             >
                                             <label class="form-check-label" for="gender_m" >
                                                 M
@@ -107,8 +107,9 @@
                                                 type="radio"
                                                 name="gender"
                                                 id="gender_f"
-                                                value="F" {{ isset($currentCustomer['gender']) && $currentCustomer['gender'] == "F"? "checked" : '' }}
-                                                required
+                                                value="F"
+                                                {{ isset($currentCustomer['gender']) && $currentCustomer['gender'] == "F"? "checked" : '' }}
+                                                {{ $route != "home"? "required" : "" }}
                                             >
                                             <label class="form-check-label" for="gender_f">
                                                 F
@@ -128,7 +129,7 @@
                                             id="address"
                                             name="address"
                                             value="{{ isset($currentCustomer['address'])? $currentCustomer['address'] : '' }}"
-                                            required
+                                            {{ $route != "home"? "required" : "" }}
                                         >
                                         @error('address')
                                         <div class="invalid-feedback">
@@ -143,10 +144,11 @@
                                             aria-label=""
                                             id="state_id"
                                             name="state_id"
-                                            required
+                                            {{ $route != "home"? "required" : "" }}
                                         >
+                                            <option value="">Selecione um Estado</option>
                                             @foreach($state as $key => $stateData)
-                                            <option {{ isset($currentCustomer['address']) && $currentCustomer['state_id'] == $stateData['id']? "selected" : '' }} value="{{ $stateData['id'] }}">{{ $stateData['name'] }}</option>
+                                            <option {{ isset($currentCustomer['state_id']) && $currentCustomer['state_id'] == $stateData['id']? "selected" : '' }} value="{{ $stateData['id'] }}">{{ $stateData['name'] }}</option>
                                             @endforeach
                                         </select>
                                         @error('state_id')
@@ -162,10 +164,11 @@
                                             aria-label=""
                                             id="city_id"
                                             name="city_id"
-                                            required
+                                            {{ $route != "home"? "required" : "" }}
                                         >
+                                            <option value="">Selecione uma Cidade</option>
                                             @foreach($city as $key => $cityData)
-                                            <option {{ isset($currentCustomer['address']) && $currentCustomer['city_id'] == $cityData['id']? "selected" : '' }} value="{{ $cityData['id'] }}">{{ $cityData['name'] }}</option>
+                                            <option {{ isset($currentCustomer['city_id']) && $currentCustomer['city_id'] == $cityData['id']? "selected" : '' }} value="{{ $cityData['id'] }}">{{ $cityData['name'] }}</option>
                                             @endforeach
                                         </select>
                                         @error('city_id')

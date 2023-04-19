@@ -15,7 +15,7 @@ class CityApiController extends Controller
     public function index(Request $request)
     {
         try {
-            $city = City::with('state');
+            $city = City::orderBy('name', 'asc')->with('state');
 
             if($request->name) {
                 $city = $city->where('name', 'LIKE', '%' . $request->name . '%');

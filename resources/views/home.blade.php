@@ -202,19 +202,25 @@
                                 <table class="table table-bordered mb-2">
                                     <thead>
                                         <tr class="table-success">
-                                            <th scope="col">Actions</th>
+                                            <th scope="col">Ações</th>
                                             <th scope="col">CPF</th>
-                                            <th scope="col">Full name</th>
-                                            <th scope="col">Birtdate</th>
-                                            <th scope="col">Gender</th>
+                                            <th scope="col">Nome Completo</th>
+                                            <th scope="col">Data de Nascimento</th>
+                                            <th scope="col">Sexo</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($data as $customer)
                                         <tr>
                                             <td>
-                                                <a href="{{ route("home", ["id" => $customer['id'], "method" => "POST", "route" => "customerEdit"]) }}" class="edit btn btn-success {{ $route != 'home'? 'disabled' : '' }}">Edit</a>
-                                                <a href="{{ route("customerRemove", ["id" => $customer['id']]) }}" class="edit btn btn-danger {{ $route != 'home'? 'disabled' : '' }}">Remove</a>
+                                                <a
+                                                    href="{{ route("home", ["id" => $customer['id'], "method" => "POST", "route" => "customerEdit"]) }}"
+                                                    class="edit btn btn-success {{ $route != 'home'? 'disabled' : '' }}"
+                                                >Edit</a>
+                                                <a
+                                                    href="{{ route("customerRemove", ["id" => $customer['id']]) }}"
+                                                    class="edit btn btn-danger {{ $route != 'home'? 'disabled' : '' }}"
+                                                >Remove</a>
                                             </td>
                                             <td>{{ $customer['cpf'] }}</td>
                                             <td>{{ $customer['full_name'] }}</td>
@@ -228,11 +234,25 @@
                                     <ul class="pagination">
                                         @foreach($links as $key => $pagination)
                                         @if($key == 0)
-                                        <li class="page-item {{ ($current_page == 1 || $route != 'home')? 'disabled' : '' }}"><a class="page-link" href="{{ route("home", ["page" => $current_page - 1]) }}">Previous</a></li>
+                                        <li
+                                            class="page-item {{ ($current_page == 1 || $route != 'home')? 'disabled' : '' }}"
+                                        >
+                                            <a
+                                                class="page-link"
+                                                href="{{ route("home", ["page" => $current_page - 1]) }}"
+                                            >Anterior</a>
+                                        </li>
                                         @continue
                                         @endif
                                         @if(($key - 1) == $last_page)
-                                        <li class="page-item {{ ($current_page == $last_page || $route != 'home')? 'disabled' : '' }}"><a class="page-link" href="{{ route("home", ["page" => $current_page + 1]) }}">Next</a></li>
+                                        <li
+                                            class="page-item {{ ($current_page == $last_page || $route != 'home')? 'disabled' : '' }}"
+                                        >
+                                            <a
+                                                class="page-link"
+                                                href="{{ route("home", ["page" => $current_page + 1]) }}"
+                                            >Próxima</a>
+                                        </li>
                                         @continue
                                         @endif
                                         <li class="page-item">
